@@ -1,7 +1,7 @@
-import { models, Schema, model } from 'mongoose';
-import type { TodoModelType } from 'src/types/types';
+import mongoose from 'mongoose';
+import type { TodoModelType } from '../types/types';
 
-const TodoSchema = new Schema(
+const TodoSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -18,4 +18,4 @@ const TodoSchema = new Schema(
 );
 
 export const TodoModel =
-  models.Todo ?? model<TodoModelType>('Todo', TodoSchema);
+  mongoose.models.Todo ?? mongoose.model<TodoModelType>('Todo', TodoSchema);
