@@ -1,5 +1,5 @@
 <script lang="ts">
-  console.log('Hello world Layout');
+  console.log('Hello world from layout');
 </script>
 
 <slot />

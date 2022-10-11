@@ -34,6 +34,7 @@
   <form
     method="POST"
     class="flex gap-2 flex-col"
+    action="?/create"
     use:enhance={({ form, data }) => {
       // Before form submission to server
       // Optimistic UI
@@ -53,14 +54,14 @@
       };
     }}
   >
-    <label for="">Todo</label>
-    autofocus
+    <label for="todo">Todo</label>
     <!-- svelte-ignore a11y-autofocus -->
     <input
       type="text"
       name="todoName"
       class="border rounded p-2 w-full"
       autofocus
+      id="todo"
     />
     <button
       type="submit"
@@ -73,12 +74,30 @@
     {#each todos as todo, idx}
       <li class="p-4 bg-purple-100 rounded flex justify-between items-center">
         <p>{idx + 1}. {todo.title}</p>
-        <button
-          class="px-4 py-2 rounded bg-red-300 hover:bg-red-400"
-          on:click={() => handleDeleteTodo(todo._id)}
+        <form
+          action="?/delete"
+          method="POST"
+          use:enhance={({ data }) => {
+            // Before form submission to server
+            // Optimistic UI
+            const updatedTodos = todos.filter(
+              (todo) => todo._id !== String(data.get('todoId'))
+            );
+            todos = updatedTodos;
+            return async ({ result }) => {
+              if (result.type === 'invalid') {
+                // if the request failed, we need to revert the UI
+                const currentTodos = await getCurrentTodos();
+                todos = currentTodos;
+              }
+            };
+          }}
         >
-          >Delete</button
-        >
+          <button class="px-4 py-2 rounded bg-red-300 hover:bg-red-400"
+            >>Delete</button
+          >
+          <input type="hidden" name="todoId" value={todo._id} />
+        </form>
       </li>
     {/each}
   </ul>

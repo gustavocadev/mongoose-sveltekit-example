@@ -14,7 +14,7 @@ export const load: Load = async () => {
 };
 
 export const actions: Actions = {
-  default: async ({ request }) => {
+  create: async ({ request }) => {
     const formData = await request.formData();
     const todoName = formData.get('todoName');
 
@@ -28,6 +28,20 @@ export const actions: Actions = {
     await dbDisconnect();
 
     console.log('New todo added: ', newTodo);
+    return {
+      success: true,
+    };
+  },
+
+  delete: async ({ request }) => {
+    const formData = await request.formData();
+    const todoId = formData.get('todoId');
+    console.log('todoId: ', todoId);
+    await dbConnect();
+    await TodoModel.findByIdAndDelete(todoId);
+    await dbDisconnect();
+
+    console.log('Todo deleted: ', todoId);
     return {
       success: true,
     };
