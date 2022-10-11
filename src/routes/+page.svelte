@@ -29,6 +29,9 @@
   };
 </script>
 
+<svelte:head>
+  <title>Todo App 📝</title>
+</svelte:head>
 <main class="px-[20px] sm:px-[100px] xl:px-[400px] my-4">
   <h2 class="text-center text-4xl font-bold">My Todos</h2>
   <form
