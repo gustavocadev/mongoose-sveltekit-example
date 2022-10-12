@@ -4,11 +4,11 @@ import { dbConnect, dbDisconnect } from '../../../utils/db';
 
 const todos = [
   {
-    title: 'Learn SvelteKit',
+    title: 'Watch Attack on titan',
     isDone: false,
   },
   {
-    title: 'Learn Svelte',
+    title: 'Watch Haikyuu',
     isDone: false,
   },
   {

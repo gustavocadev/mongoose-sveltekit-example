@@ -1,6 +1,8 @@
+import { goto } from '$app/navigation';
 import type { Actions, Load } from '@sveltejs/kit';
 import { TodoModel } from '../models/Todo';
 import { dbConnect, dbDisconnect } from '../utils/db';
+import { redirect } from '@sveltejs/kit';
 
 export const load: Load = async () => {
   await dbConnect();
@@ -32,11 +34,26 @@ export const actions: Actions = {
       success: true,
     };
   },
+  update: async ({ request }) => {
+    const formData = await request.formData();
+    const todoId = formData.get('todoId');
+    const todoName = formData.get('todoName');
+    await dbConnect();
+    await TodoModel.findByIdAndUpdate(todoId, {
+      title: todoName,
+    }).lean();
+    await dbDisconnect();
+
+    console.log('Todo updated: ', todoId);
+
+    return {
+      success: true,
+    };
+  },
 
   delete: async ({ request }) => {
     const formData = await request.formData();
     const todoId = formData.get('todoId');
-    console.log('todoId: ', todoId);
     await dbConnect();
     await TodoModel.findByIdAndDelete(todoId);
     await dbDisconnect();
