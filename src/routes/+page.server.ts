@@ -1,5 +1,5 @@
 import type { Actions, Load } from '@sveltejs/kit';
-import { TodoModel } from '../models/Todo';
+import { TodoModel } from '../lib/models/Todo';
 import { redirect } from '@sveltejs/kit';
 
 export const load: Load = async () => {

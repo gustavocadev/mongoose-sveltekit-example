@@ -1,6 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { TodoModel } from '../../../models/Todo';
-import { dbConnect, dbDisconnect } from '../../../utils/db';
+import { TodoModel } from '../../../lib/models/Todo';
 
 const todos = [
   {
@@ -23,10 +22,9 @@ const todos = [
 
 // seed data
 export const GET = async () => {
-  await dbConnect();
   await TodoModel.deleteMany();
   await TodoModel.insertMany(todos);
-  await dbDisconnect();
+
   return json({
     message: 'seeded',
   });

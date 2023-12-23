@@ -1,5 +1,5 @@
 import type { Handle } from '@sveltejs/kit';
-import { dbConnect } from './utils/db';
+import { dbConnect } from './lib/utils/db';
 
 await dbConnect();
 

@@ -1,5 +1,5 @@
 import { error, type Load } from '@sveltejs/kit';
-import { TodoModel } from '../../../models/Todo';
+import { TodoModel } from '../../../lib/models/Todo';
 
 export const load: Load = async ({ params }) => {
   const todoId = params.todoId;
