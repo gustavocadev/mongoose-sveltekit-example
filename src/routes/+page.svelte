@@ -1,34 +1,12 @@
 <script lang="ts">
-  import type { TodoModelType } from 'src/types/types';
   import { nanoid } from 'nanoid';
   import { enhance } from '$app/forms';
-  import { getCurrentTodos } from '../helpers/getCurrentTodos';
-  import { deleteTodoIn_DB_byId } from '../helpers/deleteTodo';
+  import type { PageServerData } from './$types';
 
-  type Data = {
-    todos: TodoModelType[];
-  };
-
-  export let data: Data;
-  let { todos } = data;
-
+  export let data: PageServerData;
+  $: ({ todos } = data);
+  $: console.log(todos);
   let isLoading = false;
-
-  // console.log('1.todos in the first render', todos);
-  const handleDeleteTodo = async (id: string) => {
-    // let's do optimistic UI
-    const updatedTodos = todos.filter((todo) => todo._id !== id);
-    todos = updatedTodos;
-
-    // let's do a request to the server
-    const ok = await deleteTodoIn_DB_byId(id);
-
-    // if the request failed, we need to revert the UI
-    if (!ok) {
-      const currentTodos = await getCurrentTodos();
-      todos = currentTodos;
-    }
-  };
 </script>
 
 <svelte:head>
@@ -40,23 +18,17 @@
   method="POST"
   class="flex gap-2 flex-col"
   action="?/create"
-  use:enhance={({ form, data }) => {
+  use:enhance={({ formElement, formData }) => {
+    isLoading = true;
     // Before form submission to server
     // Optimistic UI
-    const todoName = String(data.get('todoName'));
+    const todoName = String(formData.get('todoName'));
     todos = [{ title: todoName, _id: nanoid(), isDone: false }, ...todos];
-    form.reset();
-    console.log('2.All todos with the new todo', todos);
-    isLoading = true;
-    return async ({ update, result }) => {
-      // After form submission to server
-      const currentTodos = await getCurrentTodos();
+    formElement.reset();
 
-      // change todos to currentTodos from server
-      todos = currentTodos;
-      console.log('1.update todos with the right id from mongodb', todos);
+    console.log('2.All todos with the new todo', todos);
+    return async ({ update, result }) => {
       isLoading = false;
-      await update();
     };
   }}
 >
@@ -82,27 +54,7 @@
     <li class="p-4 bg-purple-100 rounded flex justify-between items-center">
       <p>{idx + 1}. {todo.title}</p>
       <section class="flex gap-2">
-        <form
-          action="?/delete"
-          method="POST"
-          use:enhance={({ data }) => {
-            // Before form submission to server
-            // Optimistic UI
-            isLoading = true;
-            const updatedTodos = todos.filter(
-              (todo) => todo._id !== String(data.get('todoId'))
-            );
-            todos = updatedTodos;
-            return async ({ result }) => {
-              if (result.type === 'error') {
-                // if the request failed, we need to revert the UI
-                const currentTodos = await getCurrentTodos();
-                todos = currentTodos;
-              }
-              isLoading = false;
-            };
-          }}
-        >
+        <form action="?/delete" method="POST" use:enhance>
           <button
             class="px-4 py-2 rounded bg-red-300 hover:bg-red-400"
             disabled={isLoading}

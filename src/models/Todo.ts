@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import type { TodoModelType } from '../types/types';
 
 const TodoSchema = new mongoose.Schema(
@@ -17,5 +17,5 @@ const TodoSchema = new mongoose.Schema(
   }
 );
 
-export const TodoModel =
+export const TodoModel: Model<TodoModelType> =
   mongoose.models.Todo ?? mongoose.model<TodoModelType>('Todo', TodoSchema);

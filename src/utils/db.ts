@@ -27,7 +27,9 @@ export const dbConnect = async () => {
 
     await mongoose.disconnect();
   }
-  await mongoose.connect(MONGO_URL ?? '');
+  await mongoose.connect(MONGO_URL ?? '', {
+    dbName: 'todo-test',
+  });
   mongoConnection.isConnected = 1;
   console.log('conectado a mongodb', MONGO_URL ?? '');
 };

@@ -1,43 +1,42 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import { goto } from '$app/navigation';
-  import type { TodoModelType } from '../../../types/types';
-  type Data = {
-    todo: TodoModelType;
-  };
-  export let data: Data;
+  import { applyAction, enhance } from '$app/forms';
+  import type { PageServerData } from './$types';
+
+  export let data: PageServerData;
 
   let isLoading = false;
 
-  const { todo } = data;
+  $: ({ todo } = data);
 </script>
 
 <form
   action="/?/update"
   method="POST"
   use:enhance={() => {
-    isLoading = !isLoading;
+    isLoading = true;
     return async ({ result }) => {
-      goto(`/`);
       // after form submission to server
-      if (result.type === 'invalid') {
-        goto(`/todo/${todo._id}`);
+      if (result.type === 'error') {
+        isLoading = false;
+        return;
       }
+
+      await applyAction(result);
     };
   }}
-  class="flex flex-col gap-2 "
+  class="flex flex-col gap-2"
 >
   <label for="">Update your Todo</label>
   <input
     type="text"
     name="todoName"
     class="border p-2 rounded"
-    value={todo.title}
+    value={todo?.title}
   />
-  <input type="hidden" name="todoId" value={todo._id} />
+  <input type="hidden" name="todoId" value={todo?._id} />
   <button
     type="submit"
-    class="bg-green-300 hover:bg-green-400 rounded py-2 flex items-center justify-center "
+    class="bg-green-300 hover:bg-green-400 rounded py-2 flex items-center justify-center"
     disabled={isLoading}
   >
     {#if isLoading}

@@ -1,8 +1,9 @@
-import type { Load } from '@sveltejs/kit';
+import { error, type Load } from '@sveltejs/kit';
 import { TodoModel } from '../../../models/Todo';
 
 export const load: Load = async ({ params }) => {
   const todoId = params.todoId;
+
   if (!todoId) {
     return {
       status: 404,
@@ -11,11 +12,16 @@ export const load: Load = async ({ params }) => {
   }
   console.log('todoId: ', todoId);
 
-  let foundTodo = await TodoModel.findById(todoId).lean();
+  const todo = await TodoModel.findById(todoId).lean();
 
-  foundTodo = JSON.parse(JSON.stringify(foundTodo));
+  if (!todo) {
+    throw error(404, 'Not found');
+  }
 
   return {
-    todo: foundTodo,
+    todo: {
+      ...todo,
+      _id: todo._id.toString(),
+    },
   };
 };
