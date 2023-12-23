@@ -94,7 +94,7 @@
             );
             todos = updatedTodos;
             return async ({ result }) => {
-              if (result.type === 'invalid') {
+              if (result.type === 'error') {
                 // if the request failed, we need to revert the UI
                 const currentTodos = await getCurrentTodos();
                 todos = currentTodos;
